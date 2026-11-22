@@ -1,0 +1,19 @@
+{
+    "name": "nhc-tropical-cyclones",
+    "version": "1.0.0",
+    "private": true,
+    "type": "module",
+    "description": "Monitor active tropical cyclones and published forecast tracks from NOAA NHC.",
+    "engines": { "node": ">=22" },
+    "main": "src/main.js",
+    "scripts": {
+        "start": "node src/main.js",
+        "test": "node --test"
+    },
+    "license": "Apache-2.0",
+    "dependencies": {
+        "apify": "^3.2.6",
+        "fflate": "^0.8.2",
+        "shapefile": "^0.6.6"
+    }
+}

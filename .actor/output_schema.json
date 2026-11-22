@@ -1,0 +1,16 @@
+{
+    "actorOutputSchemaVersion": 1,
+    "title": "NOAA NHC tropical cyclone results",
+    "properties": {
+        "overview": {
+            "type": "string",
+            "title": "Storm overview",
+            "template": "{{links.apiDefaultDatasetUrl}}/items?view=overview"
+        },
+        "results": {
+            "type": "string",
+            "title": "All storm fields (JSON)",
+            "template": "{{links.apiDefaultDatasetUrl}}/items"
+        }
+    }
+}

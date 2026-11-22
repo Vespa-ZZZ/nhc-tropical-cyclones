@@ -1,0 +1,72 @@
+{
+    "actorSpecification": 1,
+    "fields": {
+        "type": "object",
+        "required": [
+            "id", "binNumber", "name", "classification", "basin", "advisoryNumber", "issuanceTime",
+            "lat", "lon", "intensityKt", "intensityKmh", "pressureMb", "movementDirDeg",
+            "movementSpeedMph", "publicAdvisoryUrl", "forecastAdvisoryUrl", "forecastTrackUrl", "source"
+        ],
+        "properties": {
+            "id": { "type": "string", "description": "NHC storm identifier, such as AL112017." },
+            "binNumber": { "type": "string", "description": "NHC advisory slot, such as AT1." },
+            "name": { "type": ["string", "null"], "description": "Name or designation used by NHC." },
+            "classification": { "type": "string", "description": "Current NHC storm classification code." },
+            "basin": { "type": "string", "enum": ["AL", "EP", "CP"], "description": "Basin indicated by the storm ID." },
+            "advisoryNumber": { "type": "string", "description": "Public advisory number with any intermediate advisory suffix." },
+            "issuanceTime": { "type": "string", "format": "date-time", "description": "Public advisory issuance time in UTC." },
+            "lat": { "type": ["number", "null"], "description": "Center latitude in decimal degrees north." },
+            "lon": { "type": ["number", "null"], "description": "Center longitude in decimal degrees east." },
+            "intensityKt": { "type": ["number", "null"], "description": "Maximum sustained wind in knots." },
+            "intensityKmh": { "type": ["number", "null"], "description": "Maximum sustained wind converted to kilometers per hour." },
+            "pressureMb": { "type": ["number", "null"], "description": "Central mean sea level pressure in millibars." },
+            "movementDirDeg": { "type": ["number", "null"], "description": "Movement bearing in degrees clockwise from true north." },
+            "movementSpeedMph": { "type": ["number", "null"], "description": "Movement speed in miles per hour." },
+            "publicAdvisoryUrl": { "type": "string", "description": "Link to the NHC public or intermediate advisory." },
+            "forecastAdvisoryUrl": { "type": ["string", "null"], "description": "Link to the latest NHC forecast advisory, when linked." },
+            "forecastTrackUrl": { "type": ["string", "null"], "description": "Link to the NHC forecast track ZIP, when linked." },
+            "forecastTrack": {
+                "type": ["array", "null"],
+                "description": "NHC forecast points in UTC time order. Null when the track is missing or could not be loaded. Omitted when disabled.",
+                "items": {
+                    "type": "object",
+                    "required": ["time", "lat", "lon", "maxWindKt", "classification"],
+                    "properties": {
+                        "time": { "type": "string", "format": "date-time", "description": "Forecast valid time in UTC." },
+                        "lat": { "type": ["number", "null"], "description": "Forecast center latitude in decimal degrees north." },
+                        "lon": { "type": ["number", "null"], "description": "Forecast center longitude in decimal degrees east." },
+                        "maxWindKt": { "type": ["number", "null"], "description": "Forecast maximum sustained wind in knots." },
+                        "classification": { "type": ["string", "null"], "description": "NHC development classification from the forecast point table." }
+                    }
+                }
+            },
+            "forecastTrackError": { "type": "string", "description": "Brief error message when a linked forecast ZIP could not be fetched or parsed." },
+            "source": { "type": "string", "description": "Source attribution." }
+        }
+    },
+    "views": {
+        "overview": {
+            "title": "Storm overview",
+            "transformation": {
+                "fields": ["id", "name", "basin", "classification", "advisoryNumber", "issuanceTime", "lat", "lon", "intensityKt", "pressureMb", "publicAdvisoryUrl", "source"]
+            },
+            "display": {
+                "component": "table",
+                "properties": {
+                    "id": { "label": "Storm ID", "format": "text" },
+                    "name": { "label": "Name", "format": "text" },
+                    "basin": { "label": "Basin", "format": "text" },
+                    "classification": { "label": "Classification", "format": "text" },
+                    "advisoryNumber": { "label": "Advisory", "format": "text" },
+                    "issuanceTime": { "label": "Issued (UTC)", "format": "date" },
+                    "lat": { "label": "Latitude", "format": "number" },
+                    "lon": { "label": "Longitude", "format": "number" },
+                    "intensityKt": { "label": "Wind (kt)", "format": "number" },
+                    "pressureMb": { "label": "Pressure (mb)", "format": "number" },
+                    "publicAdvisoryUrl": { "label": "Public advisory", "format": "link" },
+                    "source": { "label": "Source", "format": "text" }
+                }
+            }
+        }
+    }
+}

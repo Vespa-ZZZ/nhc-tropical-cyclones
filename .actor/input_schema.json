@@ -1,0 +1,50 @@
+{
+    "title": "NOAA NHC tropical cyclones",
+    "type": "object",
+    "schemaVersion": 1,
+    "properties": {
+        "basins": {
+            "title": "Storm basins",
+            "type": "array",
+            "description": "Choose one or more basins by storm ID prefix. AL is the Atlantic, EP is the Eastern Pacific, and CP is the Central Pacific.",
+            "editor": "select",
+            "items": { "type": "string", "enum": ["AL", "EP", "CP"] },
+            "minItems": 1,
+            "maxItems": 3,
+            "uniqueItems": true,
+            "default": ["AL", "EP", "CP"],
+            "prefill": ["AL", "EP", "CP"]
+        },
+        "includeForecastTrack": {
+            "title": "Include forecast track points",
+            "type": "boolean",
+            "description": "Fetch the linked NHC forecast track and include valid time, position, maximum wind in knots, and classification for each forecast point.",
+            "default": true,
+            "prefill": true
+        },
+        "minIntensity": {
+            "title": "Minimum storm classification",
+            "type": "string",
+            "description": "Filter by the current NHC storm classification. TD includes subtropical depressions, TS includes subtropical storms, and HU includes major hurricanes. Leave blank for all classifications.",
+            "editor": "select",
+            "enum": ["TD", "TS", "HU"],
+            "enumTitles": ["Tropical depression", "Tropical storm", "Hurricane"]
+        },
+        "onlyNew": {
+            "title": "Emit new or changed advisories only",
+            "type": "boolean",
+            "description": "Compare the public advisory number, issue time, and forecast track availability with the last saved dataset row for each storm under this state key.",
+            "default": false,
+            "prefill": false
+        },
+        "stateKey": {
+            "title": "Monitoring state key",
+            "type": "string",
+            "description": "Shared label for successive monitoring runs. Use 1 to 50 letters, digits, underscores, or hyphens. Choose a separate key for each schedule.",
+            "editor": "textfield",
+            "pattern": "^[a-zA-Z0-9_-]{1,50}$",
+            "default": "default",
+            "prefill": "default"
+        }
+    }
+}

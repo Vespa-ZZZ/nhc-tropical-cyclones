@@ -1,0 +1,14 @@
+{
+    "actorSpecification": 1,
+    "name": "nhc-tropical-cyclones",
+    "title": "Active Tropical Cyclones and Forecast Tracks (NOAA NHC)",
+    "description": "Retrieve active Atlantic, Eastern Pacific, and Central Pacific storms, their latest public advisories, and published forecast track points.",
+    "version": "1.0",
+    "buildTag": "latest",
+    "input": "./input_schema.json",
+    "storages": {
+        "dataset": "./dataset_schema.json"
+    },
+    "dockerfile": "../Dockerfile",
+    "output": "./output_schema.json"
+}
