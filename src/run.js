@@ -1,3 +1,4 @@
+import { pushDataWithinLimit } from './charging.js';
 import { parseForecastTrack } from './forecast.js';
 import { FEED_URL, meetsMinIntensity, parseFeed, parseInput, sanitize } from './nhc.js';
 
@@ -136,7 +137,7 @@ export async function run({
                 continue;
             }
 
-            const charge = await actor.pushData(row);
+            const charge = await pushDataWithinLimit(actor, row);
             summary.chargeLimitReached = charge?.eventChargeLimitReached === true;
             // A zero charge without a limit hit is also a successful push outside PPE.
             if (!summary.chargeLimitReached || charge.chargedCount > 0) {
@@ -144,6 +145,7 @@ export async function run({
                 if (state) await state.setValue(key, fingerprint);
             }
             if (summary.chargeLimitReached) {
+                summary.stopReason = 'spendingLimit';
                 log.warning('Pay-per-event charge limit reached. Stopping dataset output.');
                 break;
             }

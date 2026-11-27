@@ -11,7 +11,7 @@ const trackUrl = 'https://www.nhc.noaa.gov/gis/forecast/archive/al112017_5day_04
 const firstKey = 'seen-default-AL112017';
 const secondKey = 'seen-default-AL122017';
 
-async function simulate({ input, responses = [sample], charges = [], seen = new Map() } = {}) {
+async function simulate({ input, responses = [sample], charges = [], seen = new Map(), configureActor } = {}) {
     const requests = [];
     const pauses = [];
     const rows = [];
@@ -41,6 +41,7 @@ async function simulate({ input, responses = [sample], charges = [], seen = new 
         async exit() { exited = true; },
         async fail(message) { failure = message; },
     };
+    configureActor?.(actor, rows);
     await run({
         actor,
         async fetch(url, options) {
@@ -249,4 +250,25 @@ test('fails without retries on a 403 or on a changed feed format', async () => {
     assert.deepEqual(changed.requests, [FEED_URL]);
     assert.match(changed.failure, /Unrecognized CurrentStorms.json format/);
     assert.equal(changed.values.RUN_SUMMARY, undefined);
+});
+
+test('prechecks the dataset item budget and allows non-PPE output', async () => {
+    for (const [isPayPerEvent, budget] of [[true, 1], [true, 0], [false, 0]]) {
+        const configureActor = (actor, records) => {
+            actor.getChargingManager = () => ({
+                getPricingInfo: () => ({ isPayPerEvent }),
+                calculateMaxEventChargeCountWithinLimit(event) {
+                    assert.equal(event, 'apify-default-dataset-item');
+                    return budget - records.length;
+                },
+            });
+        };
+        const seen = new Map();
+        const result = await simulate({ input: { includeForecastTrack: false, onlyNew: true }, seen, configureActor });
+        const expected = isPayPerEvent ? budget : 2;
+        assert.equal(result.exited, true, result.failure);
+        assert.equal(result.rows.length, expected);
+        assert.equal(seen.size, expected);
+        assert.equal(result.values.RUN_SUMMARY.stopReason, isPayPerEvent ? 'spendingLimit' : undefined);
+    }
 });
